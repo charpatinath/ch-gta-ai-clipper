@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101522"><meta name="description" content="Private mobile video clipper for authorized footage.">
+<link rel="manifest" href="manifest.webmanifest">
+<title>CH GTA AI CLIPPER</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151d30;--line:#29344c;--muted:#9aa8c2;--txt:#f4f7ff;--accent:#6ee7d2;--blue:#7aa7ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#1b2a49 0,transparent 38%),var(--bg);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,sans-serif;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)}
+main{max-width:760px;margin:auto;padding:18px 0 40px}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#6ee7d2,#668cff);display:grid;place-items:center;color:#07111d;font-weight:900;font-size:19px}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;font-weight:800}h1{font-size:22px;margin:2px 0}p{color:var(--muted);line-height:1.5}.panel{background:rgba(21,29,48,.94);border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0}.panel h2{font-size:16px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:10px 0}.field label{display:block;color:#c4cde0;font-size:12px;margin:0 0 6px}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;background:#0c1425;border:1px solid #35435f;color:var(--txt);border-radius:11px;padding:12px;min-height:44px}input[type=file]{padding:10px}input[type=checkbox]{width:18px;min-height:18px;accent-color:var(--accent)}button{border:0;border-radius:12px;padding:13px 15px;font-weight:800;background:var(--accent);color:#07151b;width:100%;min-height:46px}button.secondary{background:#263550;color:#e8efff;border:1px solid #3a4a68}button:disabled{opacity:.45}.row{display:flex;gap:9px;align-items:center}.row>*{flex:1}.muted{color:var(--muted);font-size:12px}.status{background:#0b1425;border:1px solid var(--line);border-radius:12px;padding:11px;color:#cbd6ed;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}.progress{height:8px;background:#26334c;border-radius:20px;overflow:hidden;margin:10px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width .2s}.clip{border:1px solid var(--line);border-radius:13px;padding:12px;margin:9px 0;background:#10192b}.cliphead{display:flex;justify-content:space-between;align-items:center;gap:10px}.clip strong{font-size:14px}.clip small{color:var(--muted)}.clip input{margin-top:8px}.clip .check{width:auto;min-height:0}.notice{border-left:3px solid #f4c56a;padding:9px 11px;background:#292516;border-radius:8px;color:#f6dfaa;font-size:12px;line-height:1.5}.ok{color:var(--accent)}video{width:100%;max-height:280px;background:#000;border-radius:12px;margin-top:10px}.hidden{display:none}.footer{text-align:center;color:#71809e;font-size:11px;margin:24px 0}
+@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.panel{padding:13px}}
+</style>
+</head>
+<body><main>
+<header class="brand"><div class="logo">CH</div><div><div class="eyebrow">MOBILE WEB EDITION</div><h1>GTA AI CLIPPER</h1><div class="muted">Long video in. Short vertical clips out.</div></div></header>
+<div class="notice" style="margin-top:15px">Local browser processing • No account • No automatic upload. Use only videos you own or are authorized to edit. Large/long videos may exceed phone memory or processing limits.</div>
+
+<section class="panel">
+<h2>1. Import video</h2>
+<div class="field"><label>Select a video from your phone</label><input id="file" type="file" accept="video/*"></div>
+<div id="meta" class="muted">No video selected yet.</div><video id="preview" controls playsinline class="hidden"></video>
+</section>
+
+<section class="panel">
+<h2>2. Clip settings</h2>
+<div class="grid">
+<div class="field"><label>Number of clips</label><select id="count"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>15</option></select></div>
+<div class="field"><label>Clip duration</label><select id="length"><option value="15">15 seconds</option><option value="20">20 seconds</option><option selected value="30">30 seconds</option><option value="45">45 seconds</option><option value="60">60 seconds</option></select></div>
+<div class="field"><label>Output format</label><select id="ratio"><option value="9:16" selected>9:16 Reels / Shorts</option><option value="1:1">1:1 Square</option><option value="16:9">16:9 Landscape</option></select></div>
+<div class="field"><label>Quality</label><select id="quality"><option value="720" selected>720p (recommended)</option><option value="1080">1080p (heavier)</option></select></div>
+<div class="field"><label>Video type</label><select id="type"><option>Gaming</option><option>Podcast</option><option>Interview</option><option>Tutorial</option><option>Vlog</option></select></div>
+<div class="field"><label>Layout</label><select id="layout"><option value="blur" selected>Full video + blurred background</option><option value="crop">Fill / crop</option></select></div>
+</div>
+<div class="field"><label class="row" style="justify-content:flex-start"><input id="rights" type="checkbox" style="width:18px"> I own this video or have permission to edit it.</label></div>
+<button id="analyze" disabled>Find clip suggestions</button>
+<p class="muted">Suggestions are evenly spaced starting points, not AI-detected viral moments. Review and adjust timestamps before export.</p>
+</section>
+
+<section class="panel hidden" id="candidatePanel">
+<h2>3. Review clips</h2><div id="candidateList"></div>
+<button id="render" disabled>Export selected clips</button>
+<div class="progress"><div class="bar" id="bar"></div></div><div id="status" class="status">Ready when you are.</div>
+</section>
+
+<section class="panel">
+<h2>Processing engine</h2>
+<p class="muted">The first export loads the open-source FFmpeg engine in your browser. This may use substantial mobile data and memory. Keep Chrome open while exporting.</p>
+<button id="load" class="secondary">Load video engine</button>
+<div id="engineStatus" class="status" style="margin-top:10px">Engine not loaded.</div>
+</section>
+<div class="footer">CH GTA AI CLIPPER • Mobile build • Private local processing</div>
+</main>
+<script type="module">
+const $=id=>document.getElementById(id);
+let file=null,duration=0,ffmpeg=null,clips=[];
+const fmt=s=>{s=Math.max(0,Number(s)||0);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=(s%60).toFixed(2).padStart(5,'0');return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${sec}`};
+const status=t=>$('status').textContent=t;
+function setProgress(p){$('bar').style.width=Math.max(0,Math.min(100,p))+'%'}
+$('file').addEventListener('change',()=>{
+ file=$('file').files[0];if(!file)return;
+ const url=URL.createObjectURL(file);$('preview').src=url;$('preview').classList.remove('hidden');
+ $('preview').onloadedmetadata=()=>{duration=$('preview').duration;$('meta').textContent=`${file.name} • ${fmt(duration)} • ${(file.size/1024/1024).toFixed(1)} MB • ${$('preview').videoWidth}×${$('preview').videoHeight}`;$('analyze').disabled=false;};
+});
+$('analyze').onclick=()=>{
+ if(!file||!duration)return;
+ if(!$('rights').checked){alert('Please confirm that you have permission to edit this video.');return;}
+ const n=Number($('count').value),len=Number($('length').value);
+ if(duration<len){alert('This video is shorter than the selected clip duration.');return;}
+ clips=[];const usable=duration-len;const actual=Math.min(n,Math.max(1,Math.floor(duration/len)));
+ for(let i=0;i<actual;i++){let start=actual===1?Math.max(0,(duration-len)/2):usable*i/(actual-1);clips.push({id:i+1,start,end:start+len,selected:true});}
+ renderList();$('candidatePanel').classList.remove('hidden');$('render').disabled=false;
+ status(`${clips.length} suggestions ready. These are evenly spaced timestamps, not AI highlight detection.`);
+};
+function renderList(){
+ $('candidateList').innerHTML='';
+ clips.forEach((c,i)=>{
+  const el=document.createElement('div');el.className='clip';
+  el.innerHTML=`<div class="cliphead"><strong>Clip ${String(i+1).padStart(2,'0')}</strong><label class="muted"><input class="check" type="checkbox" ${c.selected?'checked':''}> Export</label></div><div class="grid"><div class="field"><label>Start (seconds)</label><input class="start" type="number" min="0" step=".1" value="${c.start.toFixed(1)}"></div><div class="field"><label>End (seconds)</label><input class="end" type="number" min=".1" step=".1" value="${c.end.toFixed(1)}"></div></div><small>Approx. ${fmt(c.start)} – ${fmt(c.end)}</small>`;
+  el.querySelector('.check').onchange=e=>{c.selected=e.target.checked;$('render').disabled=!clips.some(x=>x.selected)};
+  el.querySelector('.start').onchange=e=>{c.start=Number(e.target.value)};
+  el.querySelector('.end').onchange=e=>{c.end=Number(e.target.value)};
+  $('candidateList').appendChild(el);
+ });
+}
+async function loadEngine(){
+ if(ffmpeg)return;
+ $('load').disabled=true;$('engineStatus').textContent='Loading FFmpeg core from CDN. Internet connection required…';
+ try{
+  const {FFmpeg}=await import('https://esm.sh/@ffmpeg/ffmpeg@0.12.15');
+  const {toBlobURL}=await import('https://esm.sh/@ffmpeg/util@0.12.2');
+  ffmpeg=new FFmpeg();
+  ffmpeg.on('log',({message})=>{if(message)$('engineStatus').textContent=message.slice(-500)});
+  ffmpeg.on('progress',({progress})=>setProgress(progress*100));
+  const base='https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd';
+  await ffmpeg.load({coreURL:await toBlobURL(base+'/ffmpeg-core.js','text/javascript'),wasmURL:await toBlobURL(base+'/ffmpeg-core.wasm','application/wasm')});
+  $('engineStatus').textContent='FFmpeg engine loaded. Ready to export.';$('load').textContent='Engine ready';
+ }catch(e){$('engineStatus').textContent='Could not load engine: '+e.message+'\\nCheck internet, then reload the page and try again.';$('load').disabled=false;throw e}
+}
+$('load').onclick=()=>loadEngine().catch(()=>{});
+function dimensions(){
+ const q=Number($('quality').value),r=$('ratio').value;
+ if(r==='9:16')return [Math.round(q*9/16/2)*2,q];
+ if(r==='1:1')return [q,q];
+ return [q,Math.round(q*9/16/2)*2];
+}
+$('render').onclick=async()=>{
+ const chosen=clips.filter(c=>c.selected);
+ if(!chosen.length)return;
+ if(!ffmpeg){try{await loadEngine()}catch{return}}
+ $('render').disabled=true;let done=0;
+ try{
+  const inputName='source'+(file.name.match(/\.[a-zA-Z0-9]+$/)?.[0]||'.mp4');
+  status('Reading source into browser memory… Large files may fail on phones.');
+  await ffmpeg.writeFile(inputName,new Uint8Array(await file.arrayBuffer()));
+  const [w,h]=dimensions();
+  for(let i=0;i<chosen.length;i++){
+   const c=chosen[i],start=Math.max(0,c.start),end=Math.min(duration,c.end),len=end-start;
+   if(!Number.isFinite(start)||!Number.isFinite(end)||len<=0||end>duration+0.01)throw new Error(`Invalid timestamps for clip ${i+1}`);
+   const out=`CH_GTA_clip_${String(i+1).padStart(2,'0')}.mp4`;
+   const blur=$('layout').value==='blur';
+   const vf=blur
+    ?`[0:v]split=2[fg][bg];[bg]scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},boxblur=20:10[blur];[fg]scale=${w}:${h}:force_original_aspect_ratio=decrease[front];[blur][front]overlay=(W-w)/2:(H-h)/2,setsar=1[outv]`
+    :`scale=${w}:${h}:force_original_aspect_ratio=increase,crop=${w}:${h},setsar=1`;
+   status(`Exporting clip ${i+1} of ${chosen.length}…`);
+   const args=['-ss',String(start),'-i',inputName,'-t',String(len)];
+   if(blur) args.push('-filter_complex',vf,'-map','[outv]','-map','0:a?');
+   else args.push('-vf',vf);
+   args.push('-c:v','libx264','-preset','ultrafast','-crf','27','-pix_fmt','yuv420p','-c:a','aac','-b:a','128k','-movflags','+faststart',out);
+   await ffmpeg.exec(args);
+   const data=await ffmpeg.readFile(out);const blob=new Blob([data.buffer],{type:'video/mp4'});const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');a.href=url;a.download=out;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+   await ffmpeg.deleteFile(out);done++;setProgress(done/chosen.length*100);
+  }
+  await ffmpeg.deleteFile(inputName);status(`Finished: ${done} clip(s) exported. Check your Downloads folder.`);
+ }catch(e){status('Export stopped: '+e.message+'\\nTry a shorter/smaller video or 720p.');}
+ finally{$('render').disabled=false}
+};
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>

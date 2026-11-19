@@ -1,0 +1,9 @@
+{
+  "name": "CH GTA AI CLIPPER",
+  "short_name": "CH Clipper",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#101522",
+  "icons": []
+}
